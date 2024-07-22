@@ -14,10 +14,21 @@ return [
     | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
     |
     */
-    'paths' => ['api/*'],
-    'allowed_methods' => ['GET', 'POST', 'PUT', 'DELETE'],
+
+    'paths' => ['*', 'sanctum/csrf-cookie'],
+
+    'allowed_methods' => ['*'],
+
     'allowed_origins' => ['*'],
-    'allowed_headers' => ['Content-Type', 'Authorization'],
-    'max_age' => 3600,
+
+    'allowed_origins_patterns' => [],
+
+    'allowed_headers' => ['*'],
+
+    'exposed_headers' => [],
+
+    'max_age' => 0,
+
     'supports_credentials' => false,
+
 ];

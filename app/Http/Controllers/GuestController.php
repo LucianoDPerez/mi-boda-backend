@@ -37,9 +37,12 @@ class GuestController extends Controller
 
     public function update(Request $request)
     {
+        //return response()->json('ok!!!');
         $data = $request->all();
 
-        $phone = '+' . $data['phone'];
+        //return response()->json($data);
+
+        $phone = $data['phone'];
 
         try {
             $guest = Guest::where('phone', $phone)->first();
