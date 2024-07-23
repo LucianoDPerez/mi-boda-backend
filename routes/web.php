@@ -17,3 +17,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/generate-urls', [GuestController::class, 'generateUrls'])->name('generate-urls');
+Route::get('/whatsapp', [GuestController::class, 'whatsapp']);
+
+

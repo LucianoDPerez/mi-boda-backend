@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Guest;
 use Illuminate\Http\Request;
+use WaAPI\WaAPI\WaAPI;
 
 class GuestController extends Controller
 {
@@ -42,7 +43,7 @@ class GuestController extends Controller
 
         //return response()->json($data);
 
-        $phone = $data['phone'];
+        $phone = "+" . $data['phone'];
 
         try {
             $guest = Guest::where('phone', $phone)->first();
@@ -66,5 +67,26 @@ class GuestController extends Controller
         $guest->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function generateUrls()
+    {
+        $guests = Guest::all();
+        $urls = [];
+
+        foreach ($guests as $guest) {
+            $phone = $guest->phone;
+            $phone = str_replace(" ", "%20", $phone);
+            $url = 'https://bsapps.site/?phone=' . $phone;
+
+            $urls[] = $url;
+        }
+
+        return response()->json(['urls' => $urls]);
+    }
+
+    public function whatsapp() {
+        $waAPI = new WaAPI();
+        return response()->json($waAPI->sendMessage('5493436446919@c.us', 'Probando mi bot whatsapp una vez mas!!!'));
     }
 }
