@@ -18,6 +18,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::get('/guests', [GuestController::class, 'index']);
+
 Route::get('/generate-urls', [GuestController::class, 'generateUrls'])->name('generate-urls');
 Route::get('/whatsapp', [GuestController::class, 'whatsapp']);
 

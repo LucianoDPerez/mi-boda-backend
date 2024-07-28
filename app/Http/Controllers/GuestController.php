@@ -13,7 +13,12 @@ class GuestController extends Controller
      */
     public function index()
     {
-        return Guest::all();
+        $guests = Guest::orderBy('confirmation')->get();
+
+        $totalConfirmations = $guests->where('confirmation', true)->count();
+        $pendingConfirmations = $guests->where('confirmation', false)->count();
+
+        return view('guests.index', compact('guests', 'totalConfirmations', 'pendingConfirmations'));
     }
 
     public function store(Request $request)
@@ -79,14 +84,39 @@ class GuestController extends Controller
             $phone = str_replace(" ", "%20", $phone);
             $url = 'https://bsapps.site/?phone=' . $phone;
 
-            $urls[] = $url;
+            $urls[] = ['nombre: ' => $guest->name , 'link: ' => $url];
         }
 
         return response()->json(['urls' => $urls]);
     }
 
     public function whatsapp() {
+        $guests = Guest::all();
+
         $waAPI = new WaAPI();
-        return response()->json($waAPI->sendMessage('5493436446919@c.us', 'Probando mi bot whatsapp una vez mas!!!'));
+
+        foreach ($guests as $guest) {
+            if ($guest->id > 32){
+                $phone = $guest->phone;
+                $phone_sent = str_replace(" ", "%20", $phone);
+                $phone = str_replace(" ", "", $phone);
+                $phone = str_replace("-", "", $phone);
+                $phone = str_replace("+", "", $phone);
+                $url = 'https://bsapps.site/?phone=' . $phone_sent;
+
+                $sent = $waAPI->sendMessage($phone . '@c.us', 'Te invitamos a nuestro casamiento! ' . $url);
+
+                if ($sent) dump([
+                    'guestID' => $guest->id,
+                    'name' => $guest->name,
+                    'phone' => $phone,
+                    'phone_sent' => $phone_sent,
+                    'url' => $url
+                ]);
+
+            }
+        }
+
+        return response()->json('FINISH!!!');
     }
 }
