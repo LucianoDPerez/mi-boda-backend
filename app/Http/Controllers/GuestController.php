@@ -13,12 +13,29 @@ class GuestController extends Controller
      */
     public function index()
     {
-        $guests = Guest::orderBy('confirmation')->get();
+        $guestCounts = Guest::all();
+        $perPage = 10; // Cantidad de registros por página
 
-        $totalConfirmations = $guests->where('confirmation', true)->count();
-        $pendingConfirmations = $guests->where('confirmation', false)->count();
+        $guests = Guest::orderBy('confirmation')
+            ->paginate($perPage);
 
-        return view('guests.index', compact('guests', 'totalConfirmations', 'pendingConfirmations'));
+        // Obtén información de paginación
+        $totalConfirmations = $guestCounts->where('confirmation', true)->count();
+        $pendingConfirmations = $guestCounts->where('confirmation', false)->count();
+        $currentPage = $guests->currentPage();
+        $totalPages = $guests->lastPage();
+        $previousPage = $guests->previousPageUrl() ? $guests->currentPage() - 1 : null; // Corrección
+        $nextPage = $guests->nextPageUrl() ? $guests->currentPage() + 1 : null; // Corrección
+
+        return view('guests.index', compact(
+            'guests',
+            'totalConfirmations',
+            'pendingConfirmations',
+            'currentPage',
+            'totalPages',
+            'previousPage',
+            'nextPage'
+        ));
     }
 
     public function store(Request $request)
